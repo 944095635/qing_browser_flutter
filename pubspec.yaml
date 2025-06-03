@@ -85,23 +85,11 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: PlaywriteVN
-      fonts:
-        - asset: fonts/PlaywriteVN-Light.ttf
-        - asset: fonts/PlaywriteVN-Regular.ttf
-          weight: 400
     - family: Prompt
       fonts:
         - asset: fonts/Prompt-Light.ttf
         - asset: fonts/Prompt-Regular.ttf
         - asset: fonts/Prompt-Medium.ttf
-          weight: 600
-    - family: KulimPark
-      fonts:
-        - asset: fonts/KulimPark-ExtraLight.ttf
-        - asset: fonts/KulimPark-Light.ttf
-        - asset: fonts/KulimPark-Regular.ttf
-        - asset: fonts/KulimPark-Bold.ttf
           weight: 600
   #   - family: Trajan Pro
   #     fonts:
