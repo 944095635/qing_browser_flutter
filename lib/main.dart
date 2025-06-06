@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:app_links/app_links.dart';
 import 'package:get/get.dart';
-import 'package:qing/pages/frame/frame_page.dart';
+import 'package:qing/pages/splash/splash_page.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  _initAppLinks();
   runApp(const MyApp());
+}
+
+Uri? initialUri;
+
+void _initAppLinks() {
+  final appLinks = AppLinks(); // AppLinks is singleton
+
+  // Subscribe to all events (initial link and further)
+  final _ = appLinks.uriLinkStream.listen((Uri uri) async {
+    initialUri = uri;
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -25,6 +39,10 @@ class MyApp extends StatelessWidget {
           fillColor: const Color(0x22FFFFFF),
           filled: true,
           isDense: true,
+          hintStyle: TextStyle(
+            color: const Color(0xFF888888),
+            fontSize: 16,
+          ),
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(
               color: Color(0xFF555555),
@@ -40,7 +58,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const FramePage(),
+      home: const SplashPage(),
     );
   }
 }

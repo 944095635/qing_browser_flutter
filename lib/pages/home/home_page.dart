@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:qing/main.dart';
 import 'package:qing/pages/scan/scan_page.dart';
 import 'package:qing/pages/web/web_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('UI渲染完成');
+      if (initialUri != null) {
+        toWebPage(url: initialUri);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +56,12 @@ class HomePage extends StatelessWidget {
           child: TextField(
             canRequestFocus: false,
             decoration: InputDecoration(
-              hintText: "输入网址...",
+              hintText: "输入网址",
               suffixIcon: IconButton(
                 onPressed: () {
                   Get.to(
                     () => const ScanPage(),
-                    transition: Transition.fadeIn,
+                    transition: Transition.rightToLeft,
                     duration: Durations.extralong2,
                   );
                 },
@@ -57,16 +74,19 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            onTap: () {
-              Get.to(
-                () => const WebPage(),
-                transition: Transition.fade,
-                duration: Durations.extralong2,
-              );
-            },
+            onTap: toWebPage,
           ),
         ),
       ),
+    );
+  }
+
+  void toWebPage({Uri? url}) {
+    Get.to(
+      () => const WebPage(),
+      transition: Transition.fadeIn,
+      duration: Durations.extralong2,
+      arguments: url,
     );
   }
 }

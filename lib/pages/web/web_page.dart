@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebPage extends StatefulWidget {
@@ -10,10 +12,20 @@ class WebPage extends StatefulWidget {
 
 class _WebPageState extends State<WebPage> {
   late WebViewController controller;
+  late TextEditingController editingController;
+  late FocusNode focusNode;
+  Uri? initUrl;
 
   @override
   void initState() {
     super.initState();
+    initUrl = Get.arguments;
+
+    // 初始化焦点节点
+    focusNode = FocusNode();
+    // 初始化编辑控制器
+    editingController = TextEditingController();
+    // 初始化 WebView 控制器
     controller = WebViewController()
       ..setBackgroundColor(Colors.white)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -33,8 +45,27 @@ class _WebPageState extends State<WebPage> {
             return NavigationDecision.navigate;
           },
         ),
-      )
-      ..loadRequest(Uri.parse('https://www.baidu.com/'));
+      );
+
+    if (initUrl != null) {
+      controller.loadRequest(initUrl!);
+      editingController.text = initUrl!.toString();
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Future.delayed(Durations.extralong2);
+        // UI 渲染完成后的回调
+        focusNode.requestFocus();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // 释放焦点节点
+    focusNode.dispose();
+    // 释放编辑控制器
+    editingController.dispose();
   }
 
   @override
@@ -43,21 +74,27 @@ class _WebPageState extends State<WebPage> {
       appBar: AppBar(
         titleSpacing: 20,
         automaticallyImplyLeading: false,
-        title: Center(
-          child: Hero(
-            tag: "search",
-            child: Material(
-              type: MaterialType.transparency,
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "输入网址...",
+        title: Hero(
+          tag: "search",
+          child: Material(
+            type: MaterialType.transparency,
+            child: TextField(
+              focusNode: focusNode,
+              controller: editingController,
+              decoration: InputDecoration(
+                hintText: "输入网址",
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    loadUrl(editingController.text);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_forward,
+                  ),
                 ),
-                onSubmitted: (value) {
-                  if (value.isNotEmpty) {
-                    controller.loadRequest(Uri.parse(value));
-                  }
-                },
               ),
+              onSubmitted: (value) {
+                loadUrl(value);
+              },
             ),
           ),
         ),
@@ -68,5 +105,14 @@ class _WebPageState extends State<WebPage> {
         controller: controller,
       ),
     );
+  }
+
+  void loadUrl(String url) {
+    if (url.isNotEmpty) {
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://$url';
+      }
+      controller.loadRequest(Uri.parse(url));
+    }
   }
 }
