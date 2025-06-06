@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="qing"
+        android:label="QING"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
@@ -51,4 +51,6 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

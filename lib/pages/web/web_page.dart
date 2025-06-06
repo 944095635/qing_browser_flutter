@@ -52,9 +52,13 @@ class _WebPageState extends State<WebPage> {
       editingController.text = initUrl!.toString();
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Future.delayed(Durations.extralong2);
+        await Future.delayed(Durations.extralong4);
         // UI 渲染完成后的回调
         focusNode.requestFocus();
+        await Future.delayed(Durations.extralong4);
+        if (!focusNode.hasFocus) {
+          focusNode.requestFocus();
+        }
       });
     }
   }
